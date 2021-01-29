@@ -1,0 +1,78 @@
+<program>  ::=
+	<stmt_list>
+        | <REM> <LITERAL> <NL>
+
+<stmt_list>　::=
+	<stmt>
+	| <stmt_list> <NL> <stmt>
+	| <block>
+	| <stmt_list> <block>
+	| <REM> <LITERAL> <NL>
+
+<block> ::=
+	<if_prefix> <stmt> <NL>
+	| <if_prefix> <stmt> <ELSE> <stmt> <NL>
+	| <if_prefix> <NL> <stmt_list> <else_block> <ENDIF> <NL>
+	| <WHILE> <cond> <NL> <stmt_list> <WEND> <NL>
+	| <DO> <WHILE> <cond> <NL> <stmt_list> <LOOP> <NL>
+	| <DO> <UNTIL> <cond> <NL> <stmt_list> <LOOP> <NL>
+	| <DO> <NL> <stmt_list> <LOOP> <WHILE> <cond> <NL>
+	| <DO> <NL> <stmt_list> <LOOP> <UNTIL> <cond> <NL>
+
+<stmt>  ::=
+	<subst>
+	| <call_func>
+	| <FOR> <subst> <TO> <INTVAL> <NL> <stmt_list> <NEXT> <NAME>
+	| <FORALL> <NAME> <IN> <INTVAL> <RANGE> <INTVAL> <NL> <stmt_list>
+	| <END>
+
+<expr_list>  ::=
+	<expr>
+	| <expr_list> <COMMA> <expr>
+
+<if_prefix>  ::=
+	<IF> <cond> <THEN>
+
+<else_block>  ::=
+	<else_if_block>
+	| <else_if_block> <ELSE> <NL> <stmt_list>
+
+<else_if_block>   ::=
+	φ
+	｜<else_if_block> <ELSEIF> <cond> <THEN> <NL> <stmt_list>
+
+<subst> ::=
+	<leftvar> <EQ> <expr>
+	| <DIM> <NAME> <LP> <INTVAL> <RP>
+	| <DIM> <NAME> <LP> <INTVAL> <RP> <EQ> <expr_list>
+
+<cond>	 ::=
+　　　　<expr> <EQ> <expr>
+	| <expr> <GT> <expr>
+	| <expr> <LT> <expr>
+	| <expr> <GE> <expr>
+	| <expr> <LE> <expr>
+	| <expr> <NE> <expr>
+
+<expr>	::= 
+　　　　<expr> <ADD> <expr>
+	| <expr> <SUB> <expr>
+	| <expr> <MUL> <expr>
+	| <expr> <DIV> <expr>
+	| <SUB> <expr>
+	| <LP> <expr> <RP>
+	| <var>
+	| <INTVAL>
+	| <DOUBLEVAL>
+	| <LITERAL>
+	| <call_func>
+
+<var>	::=
+　　　　<NAME> /* normal variable */
+
+<leftvar>	::=
+　　　　<NAME> /* normal variable */
+
+<call_func>	::=
+	　<NAME> <LP> <expr_list> <RP>
+
