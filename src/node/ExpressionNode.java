@@ -239,10 +239,7 @@ public class ExpressionNode extends Node {
 					}
 				}
 				return new ValueImpl(output,ValueType.STRING);
-			}
-
-			//INT,DOUBLEそれぞれ 足す引くかける割る余り
-			else if (tmp.peek().getType() == ExprType.INT){
+			}	else if (tmp.peek().getType() == ExprType.INT){
 				Deque<Value> output = new ArrayDeque<>();
 				while (tmp.peek() != null){
 					switch (tmp.peek().getType()){
@@ -280,6 +277,7 @@ public class ExpressionNode extends Node {
 						break;
 					case MOD:
 						tmp.remove();
+						//MULでm1をつかっちゃったのでここだけ二文字でmo1とか
 						int mo1 = output.poll().getIValue();
 						int mo2 = output.poll().getIValue();
 						output.push(new ValueImpl(String.valueOf(mo2 % mo1),ValueType.INTEGER));
@@ -337,9 +335,8 @@ public class ExpressionNode extends Node {
 					}
 				}
 				return new ValueImpl(String.valueOf(output.poll().getDValue()),ValueType.DOUBLE);
-			}
-
-			else if (tmp.peek().getType() == ExprType.VARIABLE){
+			}	else if (tmp.peek().getType() == ExprType.VARIABLE){
+				//変数の場合はその変数がIntかDoubleかStringかを見る
 				Deque<Value> output = new ArrayDeque<>();
 				while (tmp.peek() != null){
 					switch (tmp.peek().getType()){
@@ -353,55 +350,100 @@ public class ExpressionNode extends Node {
 					case DOUBLE:
 						output.push(tmp.poll().getValue());
 						break;
+					case STRING:
+						output.push(tmp.poll().getValue());
+						break;
 					case ADD:
 						tmp.remove();
-						int a1 = output.poll().getIValue();
-						int a2 = output.poll().getIValue();
-						output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.INTEGER));
+						if(output.peek().getType() == ValueType.INTEGER) {
+							int a1 = output.poll().getIValue();
+							int a2 = output.poll().getIValue();
+							output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.INTEGER));
+						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							double a1 = output.poll().getDValue();
+							double a2 = output.poll().getDValue();
+							output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.DOUBLE));
+							break;
+						}else {
+							String a1 = output.poll().getSValue();
+							String a2 = output.poll().getSValue();
+							output.push(new ValueImpl(a2 + a1,ValueType.STRING));
+						}
 						break;
 					case SUB:
 						tmp.remove();
-						int  s1 = output.poll().getIValue();
-						int  s2 = output.poll().getIValue();
-						output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.INTEGER));
-						break;
+						if(output.peek().getType() == ValueType.INTEGER) {
+							int s1 = output.poll().getIValue();
+							int s2 = output.poll().getIValue();
+							output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.INTEGER));
+						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							double s1 = output.poll().getDValue();
+							double s2 = output.poll().getDValue();
+							output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.DOUBLE));
+							break;
+						}else {
+							error("文字列は連結以外できません");
+
+						}
 					case MUL:
-						tmp.remove();
-						int  m1 = output.poll().getIValue();
-						int  m2 = output.poll().getIValue();
-						output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.INTEGER));
-						break;
+						if(output.peek().getType() == ValueType.INTEGER) {
+							int m1 = output.poll().getIValue();
+							int m2 = output.poll().getIValue();
+							output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.INTEGER));
+						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							double m1 = output.poll().getDValue();
+							double m2 = output.poll().getDValue();
+							output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.DOUBLE));
+							break;
+						}else {
+							error("文字列は連結以外できません");
+
+						}
 					case DIV:
-						tmp.remove();
-						int d1 = output.poll().getIValue();
-						int d2 = output.poll().getIValue();
-						if(d1 == 0) error("0除算はできません");
-						output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.INTEGER));
-						break;
+						if(output.peek().getType() == ValueType.INTEGER) {
+							int d1 = output.poll().getIValue();
+							if(d1 == 0) error("0除算はできません");
+							int d2 = output.poll().getIValue();
+							output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.INTEGER));
+						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							double d1 = output.poll().getDValue();
+							if(d1 == 0.0) error("0除算はできません");
+							double d2 = output.poll().getDValue();
+							output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.DOUBLE));
+							break;
+						}else {
+							error("文字列は連結以外できません");
+						}
 					case MOD:
-						tmp.remove();
-						int mo1 = output.poll().getIValue();
-						int mo2 = output.poll().getIValue();
-						output.push(new ValueImpl(String.valueOf(mo2 % mo1),ValueType.INTEGER));
-						break;
+						if(output.peek().getType() == ValueType.INTEGER) {
+							int mo1 = output.poll().getIValue();
+							int mo2 = output.poll().getIValue();
+							output.push(new ValueImpl(String.valueOf(mo2 % mo1),ValueType.INTEGER));
+						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							double mo1 = output.poll().getDValue();
+							double mo2 = output.poll().getDValue();
+							output.push(new ValueImpl(String.valueOf(mo2 % mo1),ValueType.DOUBLE));
+							break;
+						}else {
+							error("文字列は連結以外できません");
+						}
 					default:
 						error("変数を用いた演算として不正です");
 					}
 				}
 
 				//キュー先頭を返してあげる
-				switch (output.peekFirst().getType()){
-				case INTEGER:
+				switch(output.peek().getType()) {
+				case INTEGER:					
 					return new ValueImpl(String.valueOf(output.poll().getIValue()),ValueType.INTEGER);
 				case DOUBLE:
 					return new ValueImpl(String.valueOf(output.poll().getDValue()),ValueType.DOUBLE);
 				case STRING:
-					return new ValueImpl(String.valueOf(output.poll().getSValue()),ValueType.STRING);
-				case BOOL:
-				case VOID:
+					return new ValueImpl(output.poll().getSValue(),ValueType.STRING);
 				default:
 					break;
 				}
+
 				//関数の場合はただ関数実行をしてあげる
 			}else if (tmp.peek().getType() == ExprType.FUNCTION_CALL){
 				env.getFunction(tmp.poll().getValue().getSValue()).invoke((ExprListNode)(tmp.poll()));

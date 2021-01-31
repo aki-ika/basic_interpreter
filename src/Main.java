@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -9,7 +8,7 @@ import node.Node;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		String source = "fizzbuzz.bas";
+		String source = "test24.bas"; 
 		File file = new File(source);
 		if(!file.exists()) {
 			System.out.println(source + " は存在しません");

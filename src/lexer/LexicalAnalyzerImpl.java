@@ -72,7 +72,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
 	private LexicalUnit readLiteral(char c, PushbackReader r) throws Exception {
 		String literal = "";
-		for(;;) {
+		while(true) {
 			char nextChar = (char) r.read(); //次の文字を読み込む
 			if(nextChar == '"') {//"ならループ終了
 				break;
@@ -87,7 +87,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 		String num = "";
 		num += c;
 		boolean doubleFlag = false;
-		for(;;) {
+		while(true) {
 			//0-9なら追加、ちがうならdouble型か判定してピリオドを追加
 			char nextChar = (char) r.read();
 			if(Character.isDigit(nextChar)) { 
@@ -114,7 +114,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	private LexicalUnit readName(char c, PushbackReader r) throws Exception {
 		String str = "";
 		str += c;
-		for(;;) {
+		while(true) {
 			char nextChar = (char) r.read(); //次の文字を読み込む
 			String notSpace = "[a-zA-Z0-9]";
 			Matcher mNotSpace = Pattern.compile(notSpace).matcher(String.valueOf(nextChar));

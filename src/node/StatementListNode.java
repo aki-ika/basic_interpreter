@@ -11,7 +11,6 @@ import lexer.Value;
 public class StatementListNode extends Node {
 
 	private List<Node> body = new ArrayList<>();
-	private Node tmp ;
 	
 	public StatementListNode(Environment env) {
 		super(env);

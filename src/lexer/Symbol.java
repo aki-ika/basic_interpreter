@@ -23,8 +23,6 @@ import node.ProgramNode;
 import node.StatementListNode;
 import node.StatementNode;
 import node.VariableNode;
-import lexer.LexicalType;
-import lexer.Environment;
 
 public enum Symbol {
 	program(
