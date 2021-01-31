@@ -287,8 +287,7 @@ public class ExpressionNode extends Node {
 					}
 				}
 				return new ValueImpl(String.valueOf(output.poll().getIValue()),ValueType.INTEGER);
-			}
-			else if (tmp.peek().getType() == ExprType.DOUBLE){
+			} 	else if (tmp.peek().getType() == ExprType.DOUBLE){
 				Deque<Value> output = new ArrayDeque<>();
 				while (tmp.peek() != null){
 					switch (tmp.peek().getType()){
@@ -335,8 +334,100 @@ public class ExpressionNode extends Node {
 					}
 				}
 				return new ValueImpl(String.valueOf(output.poll().getDValue()),ValueType.DOUBLE);
-			}	else if (tmp.peek().getType() == ExprType.VARIABLE){
+			}	else if (tmp.peek().getType() == ExprType.VARIABLE) {
 				//変数の場合はその変数がIntかDoubleかStringかを見る
+				//				Deque<Value> output = new ArrayDeque<>();
+				//				while (tmp.peek() != null){
+				//					switch (tmp.peek().getType()){
+				//					case VARIABLE:
+				//						Variable vn = env.getVariable(tmp.poll().toString());
+				//						output.push(vn.getValue());
+				//						break;
+				//					case INT:
+				//						output.push(tmp.poll().getValue());
+				//						break;
+				//					case DOUBLE:
+				//						output.push(tmp.poll().getValue());
+				//						break;
+				//					case STRING:
+				//						output.push(tmp.poll().getValue());
+				//						break;
+				//					case ADD:
+				//						tmp.remove();
+				//						if(output.peek().getType() == ValueType.INTEGER) {
+				//							int a1 = output.poll().getIValue();
+				//							int a2 = output.poll().getIValue();
+				//							output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.INTEGER));
+				//							break;
+				//
+				//						}else if(output.peek().getType() == ValueType.DOUBLE) {
+				//							double a1 = output.poll().getDValue();
+				//							double a2 = output.poll().getDValue();
+				//							output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.DOUBLE));
+				//							break;
+				//						}else {
+				//							String a1 = output.poll().getSValue();
+				//							String a2 = output.poll().getSValue();
+				//							output.push(new ValueImpl(a2 + a1,ValueType.STRING));
+				//							break;
+				//						}
+				//					case SUB:
+				//						tmp.remove();
+				//						if(output.peek().getType() == ValueType.INTEGER) {
+				//							int s1 = output.poll().getIValue();
+				//							int s2 = output.poll().getIValue();
+				//							output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.INTEGER));
+				//							break;
+				//						}else if(output.peek().getType() == ValueType.DOUBLE) {
+				//							double s1 = output.poll().getDValue();
+				//							double s2 = output.poll().getDValue();
+				//							output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.DOUBLE));
+				//							break;
+				//						}else {
+				//							error("文字列は連結以外できません");
+				//						}
+				//						break;
+				//					case MUL:
+				//						if(output.peek().getType() == ValueType.INTEGER) {
+				//							int m1 = output.poll().getIValue();
+				//							int m2 = output.poll().getIValue();
+				//							output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.INTEGER));
+				//						}else if(output.peek().getType() == ValueType.DOUBLE) {
+				//							double m1 = output.poll().getDValue();
+				//							double m2 = output.poll().getDValue();
+				//							output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.DOUBLE));
+				//						}else {
+				//							error("文字列は連結以外できません");
+				//						}
+				//						break;
+				//					case DIV:
+				//						if(output.peek().getType() == ValueType.INTEGER) {
+				//							int d1 = output.poll().getIValue();
+				//							if(d1 == 0) error("0除算はできません");
+				//							int d2 = output.poll().getIValue();
+				//							output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.INTEGER));
+				//						}else if(output.peek().getType() == ValueType.DOUBLE) {
+				//							double d1 = output.poll().getDValue();
+				//							if(d1 == 0.0) error("0除算はできません");
+				//							double d2 = output.poll().getDValue();
+				//							output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.DOUBLE));
+				//						}else {
+				//							error("文字列は連結以外できません");
+				//						}
+				//						break;
+				//					case MOD:
+				//						if(output.peek().getType() == ValueType.INTEGER) {
+				//							int mo1 = output.poll().getIValue();
+				//							int mo2 = output.poll().getIValue();
+				//							int ans = mo2 % mo1;
+				//							output.push(new ValueImpl(String.valueOf(ans),ValueType.INTEGER));
+				//							break;
+
+				//
+				//					default:
+				//						error("変数を用いた演算として不正です");
+				//						break;
+				//					}
 				Deque<Value> output = new ArrayDeque<>();
 				while (tmp.peek() != null){
 					switch (tmp.peek().getType()){
@@ -350,88 +441,93 @@ public class ExpressionNode extends Node {
 					case DOUBLE:
 						output.push(tmp.poll().getValue());
 						break;
-					case STRING:
-						output.push(tmp.poll().getValue());
-						break;
 					case ADD:
-						tmp.remove();
 						if(output.peek().getType() == ValueType.INTEGER) {
+							tmp.remove();
 							int a1 = output.poll().getIValue();
 							int a2 = output.poll().getIValue();
 							output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.INTEGER));
+							break;
+
 						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							tmp.remove();
 							double a1 = output.poll().getDValue();
 							double a2 = output.poll().getDValue();
 							output.push(new ValueImpl(String.valueOf(a2 + a1),ValueType.DOUBLE));
 							break;
 						}else {
+							tmp.remove();
 							String a1 = output.poll().getSValue();
 							String a2 = output.poll().getSValue();
 							output.push(new ValueImpl(a2 + a1,ValueType.STRING));
+							break;
 						}
-						break;
 					case SUB:
-						tmp.remove();
 						if(output.peek().getType() == ValueType.INTEGER) {
+							tmp.remove();
 							int s1 = output.poll().getIValue();
 							int s2 = output.poll().getIValue();
 							output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.INTEGER));
 						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							tmp.remove();
 							double s1 = output.poll().getDValue();
 							double s2 = output.poll().getDValue();
 							output.push(new ValueImpl(String.valueOf(s2 - s1),ValueType.DOUBLE));
-							break;
 						}else {
 							error("文字列は連結以外できません");
-
 						}
+						break;
 					case MUL:
 						if(output.peek().getType() == ValueType.INTEGER) {
+							tmp.remove();
 							int m1 = output.poll().getIValue();
 							int m2 = output.poll().getIValue();
 							output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.INTEGER));
 						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							tmp.remove();
 							double m1 = output.poll().getDValue();
 							double m2 = output.poll().getDValue();
 							output.push(new ValueImpl(String.valueOf(m2 * m1),ValueType.DOUBLE));
-							break;
 						}else {
 							error("文字列は連結以外できません");
-
 						}
+						break;
 					case DIV:
 						if(output.peek().getType() == ValueType.INTEGER) {
+							tmp.remove();
 							int d1 = output.poll().getIValue();
 							if(d1 == 0) error("0除算はできません");
 							int d2 = output.poll().getIValue();
 							output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.INTEGER));
 						}else if(output.peek().getType() == ValueType.DOUBLE) {
+							tmp.remove();
 							double d1 = output.poll().getDValue();
 							if(d1 == 0.0) error("0除算はできません");
 							double d2 = output.poll().getDValue();
 							output.push(new ValueImpl(String.valueOf(d2 / d1),ValueType.DOUBLE));
-							break;
 						}else {
 							error("文字列は連結以外できません");
 						}
+						break;
 					case MOD:
 						if(output.peek().getType() == ValueType.INTEGER) {
+							tmp.remove();
 							int mo1 = output.poll().getIValue();
 							int mo2 = output.poll().getIValue();
 							output.push(new ValueImpl(String.valueOf(mo2 % mo1),ValueType.INTEGER));
-						}else if(output.peek().getType() == ValueType.DOUBLE) {
-							double mo1 = output.poll().getDValue();
-							double mo2 = output.poll().getDValue();
-							output.push(new ValueImpl(String.valueOf(mo2 % mo1),ValueType.DOUBLE));
-							break;
+						}	else 	if(output.peek().getType() == ValueType.DOUBLE) {
+							tmp.remove();
+							double dmo1 = output.poll().getDValue();
+							double dmo2 = output.poll().getDValue();
+							output.push(new ValueImpl(String.valueOf(dmo2 % dmo1),ValueType.DOUBLE));
 						}else {
 							error("文字列は連結以外できません");
 						}
+						break;
 					default:
 						error("変数を用いた演算として不正です");
 					}
 				}
-
 				//キュー先頭を返してあげる
 				switch(output.peek().getType()) {
 				case INTEGER:					
